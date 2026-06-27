@@ -299,7 +299,7 @@ async function seedAgendaAndCourses(today) {
         ['class', '3A', 'Conseil de classe 3A', 'Bilan du trimestre et points de vigilance.', setTime(tuesday, 16, 45), setTime(tuesday, 18, 15), '#9B59B6', 0],
         ['class', '3A', 'Sortie CDI', 'Recherche documentaire encadree.', setTime(wednesday, 10, 0), setTime(wednesday, 11, 30), '#2ECC71', 0],
         ['teacher', 'pgothier', 'Equipe pedagogique 3A', 'Preparation du prochain cycle de devoirs.', setTime(thursday, 12, 30), setTime(thursday, 13, 15), '#E67E22', 0],
-        ['global', '*', 'Journee banalisée tests Kroco', 'Evenement sans horaire pour valider les imports.', friday, friday, '#95A5A6', 1]
+        ['global', '*', 'Journee banalisee tests Kroco', 'Evenement sans horaire pour valider les imports.', friday, friday, '#95A5A6', 1]
     ];
 
     for (const event of events) {
