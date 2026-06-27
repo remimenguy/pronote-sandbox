@@ -90,6 +90,7 @@ async function bind(req, res, currentSession) {
                     donneesSec: {
                         donnees: {
                             // ... Informations utiles sur l'école, l'emploi du temps, les paramètres, etc.
+                            identifiantNav: req.body.donneesSec.donnees.identifiantNav || "kroco-pronote-sandbox",
                             AvecEspaceMobile: false, // TODO
                             Nom: espaceNom,
                             PageEtablissement: "pageetablissement.html",

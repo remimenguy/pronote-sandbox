@@ -124,9 +124,9 @@ async function generateFinalKey(key, iv) {
     var bytes = new forge.util.ByteBuffer(forge.random.generate(16));
 
     // Convertissez les bytes en une chaîne de nombres séparés par des virgules
-    var toEncrypt = compBytes(bytes);
+    var toEncrypt = compBytes(bytes).join(',');
 
-    var encrypted = encryptAES(toEncrypt, key, iv);
+    var encrypted = await encryptAES(toEncrypt, key, iv);
 
     var solved = await decompBytes(await decryptAES(encrypted, key, iv));
     solved = forge.md.md5.create().update(solved.bytes()).digest().toHex();
@@ -143,9 +143,7 @@ function decompBytes(data) {
 }
 
 function compBytes(byteBuffer) {
-    const byteValues = byteBuffer.getBytes();
-    const array = Array.from(byteValues, (byte) => byte.toString()).join(',');
-    return array.split(',').map((value) => parseInt(value, 10));
+    return Array.from(byteBuffer.getBytes(), (byte) => byte.charCodeAt(0));
 }
 
 module.exports = {

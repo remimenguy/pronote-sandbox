@@ -70,6 +70,32 @@ function pronoteElement(label, number, genre) {
     };
 }
 
+const START_TIMES = [
+    "08:10:00", "08:40:00", "09:05:00", "09:35:00", "10:15:00",
+    "10:45:00", "11:10:00", "11:40:00", "12:05:00", "12:35:00",
+    "13:00:00", "13:30:00", "13:55:00", "14:25:00", "15:05:00",
+    "15:35:00", "16:00:00", "16:30:00", "16:55:00", "17:25:00"
+];
+
+const END_TIMES = [
+    "08:40:00", "09:05:00", "09:35:00", "10:00:00", "10:45:00",
+    "11:10:00", "11:40:00", "12:05:00", "12:35:00", "13:00:00",
+    "13:30:00", "13:55:00", "14:25:00", "14:50:00", "15:35:00",
+    "16:00:00", "16:30:00", "16:55:00", "17:25:00", "17:50:00"
+];
+
+function courseStartIndex(row) {
+    return row.place % START_TIMES.length;
+}
+
+function courseDuration(row) {
+    return Math.max(1, Math.round(row.duration / 6));
+}
+
+function courseDateTime(row, time) {
+    return `${row.date} ${time}`;
+}
+
 function eventToPronote(row) {
     return {
         "N": "AG" + row.id,
@@ -86,13 +112,17 @@ function eventToPronote(row) {
 
 function courseToPronote(row) {
     const subjectNumber = "8200" + row.id;
+    const startIndex = courseStartIndex(row);
+    const duration = courseDuration(row);
+    const endIndex = Math.min(startIndex + duration - 1, END_TIMES.length - 1);
 
     return {
         "N": "COURS" + row.id,
         "G": 0,
-        "DateDuCours": pronoteDate(row.date),
+        "DateDuCours": pronoteDate(courseDateTime(row, START_TIMES[startIndex])),
+        "DateDuCoursFin": pronoteDate(courseDateTime(row, END_TIMES[endIndex])),
         "place": row.place,
-        "duree": row.duration,
+        "duree": duration,
         "CouleurFond": row.color,
         "CouleurTexte": "#000000",
         "NomImageAppelFait": "AppelNonFait",
@@ -113,7 +143,7 @@ function courseToPronote(row) {
             }
         },
         "ListeContenus": pronoteList([
-            pronoteElement(row.subject, subjectNumber, 12),
+            pronoteElement(row.subject, subjectNumber, 16),
             pronoteElement(row.teacherLabel, "9000" + row.id, 3),
             pronoteElement(row.className, "7000" + row.id, 4),
             pronoteElement(row.room, "6000" + row.id, 17)

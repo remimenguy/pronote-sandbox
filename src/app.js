@@ -21,6 +21,10 @@ app.use(express.json())
 // Définit le dossier public
 app.use(express.static(`${__dirname}/public`));
 
+app.get('/', (req, res) => {
+    res.redirect('/fossnote/');
+});
+
 // Importer les routes
 const homeRoute = require('./routes/fossnote/home');
 const directionRoute = require('./routes/fossnote/direction');

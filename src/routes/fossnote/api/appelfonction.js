@@ -20,6 +20,7 @@ const funcStudentHomepage = require('./fonctions/eleve/homepage');
 const funcStudentGrades = require('./fonctions/eleve/lastgrades');
 const funcStudentInfos = require('./fonctions/eleve/persopage');
 const funcStudentHomeworks = require('./fonctions/eleve/homeworks');
+const funcStudentTimetable = require('./fonctions/eleve/timetable');
 
 const funcTeacherSettings = require('./fonctions/prof/settings');
 const funcTeacherHomepage = require('./fonctions/prof/homepage');
@@ -30,13 +31,41 @@ const funcTeacherListeServices = require('./fonctions/prof/listservices');
 const funcTeacherPageNotes = require('./fonctions/prof/pagenotes');
 
 // Création d'une nouvelle route pour la deuxième étape du protocole
+function normalizePronotepyRequest(req) {
+    if (req.body.donneesSec || !req.body.dataSec) {
+        return;
+    }
+
+    const dataSec = req.body.dataSec;
+    req.body.donneesSec = {
+        ...(dataSec.Signature ? { _Signature_: dataSec.Signature } : {}),
+        donnees: dataSec.data || dataSec.donnees || dataSec
+    };
+}
+
+function addPronotepyResponseCompatibility(res) {
+    const json = res.json.bind(res);
+    res.json = (payload) => {
+        if (payload && payload.donneesSec && !payload.dataSec) {
+            payload.dataSec = {
+                ...payload.donneesSec,
+                data: payload.donneesSec.data || payload.donneesSec.donnees || {}
+            };
+        }
+        return json(payload);
+    };
+}
+
 router.post('/:espace_id/:session_id/:numero_ordre', async (req, res) => {
     const {
         espace_id,
         session_id,
         numero_ordre
     } = req.params;
-    const nom = req.body.nom;
+    normalizePronotepyRequest(req);
+    addPronotepyResponseCompatibility(res);
+
+    const nom = req.body.nom || req.body.id;
 
     try {
         const currentSession = await session.getSession(session_id);
@@ -100,6 +129,10 @@ router.post('/:espace_id/:session_id/:numero_ordre', async (req, res) => {
             if(espace_id === "3") {
                 await funcStudentHomeworks.bind(req, res, currentSession);
             }
+        } else if (nom === "PageEmploiDuTemps") {
+            if(espace_id === "3") {
+                await funcStudentTimetable.bind(req, res, currentSession);
+            }
         } else if (nom === "SaisiePenseBete") {
             if(espace_id === "1") {
                 await funcTeacherPostIt.bind(req, res, currentSession);
@@ -120,9 +153,30 @@ router.post('/:espace_id/:session_id/:numero_ordre', async (req, res) => {
             if(espace_id === "1") {
                 await funcTeacherPageNotes.bind(req, res, currentSession);
             }
+        } else {
+            var numeroOrdre = await encryptAES((currentSession.numeroOrdre + 2).toString(), JSON.parse(currentSession.aes).key, JSON.parse(currentSession.aes).iv);
+            res.status(501).json({
+                nom: nom || "FonctionInconnue",
+                session: parseInt(session_id),
+                numeroOrdre: numeroOrdre,
+                donneesSec: {
+                    nom: nom || "FonctionInconnue",
+                    donnees: {}
+                }
+            });
         }
     } catch (error) {
         console.error(error);
+        if (!res.headersSent) {
+            res.status(500).json({
+                nom: nom || "Erreur",
+                session: parseInt(session_id),
+                donneesSec: {
+                    nom: nom || "Erreur",
+                    donnees: {}
+                }
+            });
+        }
     }
 });
 
