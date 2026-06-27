@@ -5,6 +5,7 @@ services:
     environment:
       FOSSNOTE_DATABASE_PATH: /data/database.db
       FOSSNOTE_SEED_ON_START: "1"
+      FOSSNOTE_DISABLE_DEMO_DATA: "1"
     ports:
       - "${FOSSNOTE_PORT:-3001}:3000"
     volumes:

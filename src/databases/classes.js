@@ -22,7 +22,9 @@ db.serialize(() => {
         if (err) {
             console.error(err.message);
         } else {
-            createClass("3A", "pgothier", "pgothier,lgousse", "akaty", "pgothier(Maths,Technologie);lgousse(Anglais)");
+            if (process.env.FOSSNOTE_DISABLE_DEMO_DATA !== "1") {
+                createClass("3A", "pgothier", "pgothier,lgousse", "akaty", "pgothier(Maths,Technologie);lgousse(Anglais)");
+            }
             console.log('Table "classes" initialized.');
         }
     });

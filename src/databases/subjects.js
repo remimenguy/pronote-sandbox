@@ -18,9 +18,11 @@ db.serialize(() => {
         if (err) {
             console.error(err.message);
         } else {
-            createSubject("Maths");
-            createSubject("Technologie");
-            createSubject("Anglais");
+            if (process.env.FOSSNOTE_DISABLE_DEMO_DATA !== "1") {
+                createSubject("Maths");
+                createSubject("Technologie");
+                createSubject("Anglais");
+            }
             console.log('Table "subjects" initialized.');
         }
     });

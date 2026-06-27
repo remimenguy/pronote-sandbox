@@ -199,12 +199,16 @@ async function ensureSchema() {
 }
 
 async function seedReferenceData(today) {
+    await run(`DELETE FROM teachers`);
+    await run(`DELETE FROM classes`);
+    await run(`DELETE FROM subjects`);
+
     const notes = [
         { id: 1, subject: 'MATHEMATIQUES', grade: '16', outof: '20', date: formatDate(addDays(today, -16)), commentary: 'Calcul litteral', coef: '1' },
-        { id: 2, subject: 'FRANCAIS', grade: '14', outof: '20', date: formatDate(addDays(today, -13)), commentary: 'Dictée et grammaire', coef: '1' },
+        { id: 2, subject: 'FRANCAIS', grade: '14', outof: '20', date: formatDate(addDays(today, -13)), commentary: 'Dictee et grammaire', coef: '1' },
         { id: 3, subject: 'SVT', grade: '17', outof: '20', date: formatDate(addDays(today, -10)), commentary: 'Respiration cellulaire', coef: '1' },
         { id: 4, subject: 'HIST.GEO', grade: '13', outof: '20', date: formatDate(addDays(today, -7)), commentary: 'Reperes chronologiques', coef: '1' },
-        { id: 5, subject: 'ANGLAIS LV1', grade: '15', outof: '20', date: formatDate(addDays(today, -4)), commentary: 'Compréhension orale', coef: '1' }
+        { id: 5, subject: 'ANGLAIS LV1', grade: '15', outof: '20', date: formatDate(addDays(today, -4)), commentary: 'Comprehension orale', coef: '1' }
     ];
 
     await run(
@@ -285,7 +289,6 @@ async function seedReferenceData(today) {
         );
     }
 
-    await run(`DELETE FROM classes WHERE name IN (?, ?)`, ['3A', '5A']);
     await run(
         `INSERT INTO classes (name, headTeacher, teachers, classRepresentatives, teacherSubjects)
          VALUES (?, ?, ?, ?, ?)`,
@@ -298,7 +301,6 @@ async function seedReferenceData(today) {
         ]
     );
 
-    await run(`DELETE FROM subjects`);
     for (const subject of [
         'SVT',
         'HIST.GEO',
@@ -323,14 +325,20 @@ async function seedReferenceData(today) {
 
 async function seedHomeworks(today) {
     const homeworks = [
-        ['Maths', 'Devoir maison', 'Exercices 12 a 18 page 142\nRediger la methode pour chaque calcul.', 'Mme Gothier P.', '3A', '', '', addDays(today, -1), addDays(today, 2), '#F49737', 0],
-        ['Anglais', 'Expression ecrite', 'Write a 120-word paragraph about your weekend plans.', 'M. Gousse L.', '3A', '', '', today, addDays(today, 3), '#5DADE2', 0],
-        ['Technologie', 'Schema fonctionnel', 'Completer le schema du capteur de luminosite et preparer trois questions.', 'Mme Gothier P.', '3A', '', '', today, addDays(today, 4), '#58D68D', 0],
-        ['Histoire-Geo', 'Carte a reviser', 'Apprendre les reperes de la carte et revoir la fiche methode.', 'Mme Gothier P.', '3A', '', '', addDays(today, -2), addDays(today, 5), '#AF7AC5', 1],
-        ['SVT', 'Compte rendu TP', 'Finaliser le compte rendu du TP sur la respiration cellulaire.', 'Mme Gothier P.', '3A', '', '', today, addDays(today, 7), '#EC7063', 0]
+        ['MATHEMATIQUES', 'Exercices de fractions', 'Exercices 24 a 31 page 87. Rediger les calculs et simplifier les resultats.', 'Pythagore', '5A', '', 'akaty', today, addDays(today, 2), '#004B87', 0],
+        ['FRANCAIS', 'Lecture analytique', 'Lire le texte distribue et repondre aux questions 1 a 6 sur le cahier.', 'Le Clezio J.', '5A', '', 'akaty', today, addDays(today, 3), '#C00000', 0],
+        ['SC. PHYS', 'Exercices circuits electriques', 'Faire les exercices 3, 4 et 7 sur les dipoles et revoir le vocabulaire.', 'Einstein A.', '5A', '', 'akaty', today, addDays(today, 4), '#0C88B8', 0],
+        ['HIST.GEO', 'Controle de reperes', 'Controle: apprendre la fiche sur les reperes historiques et savoir refaire la frise.', 'Tocqueville A.', '5A', '', 'akaty', today, addDays(today, 5), '#7A3A3A', 0],
+        ['ANGLAIS LV1', 'Vocabulaire unit 4', 'Apprendre la liste de vocabulaire et preparer cinq phrases au futur.', 'Shakespeare W.', '5A', '', 'akaty', today, addDays(today, 6), '#FF00DC', 0],
+        ['SVT', 'Schema a completer', 'Completer le schema de la respiration et apprendre les definitions du chapitre.', 'Pasteur L.', '5A', '', 'akaty', today, addDays(today, 7), '#73F4EE', 0],
+        ['TECHNO', 'Fiche projet', 'Terminer la fiche fonction d usage / fonction technique et ajouter deux exemples.', 'Jobs S.', '5A', '', 'akaty', today, addDays(today, 8), '#3498F4', 0],
+        ['ESPAGNOL LV2', 'Ejercicios de vocabulario', 'Faire les exercices 2 et 3 et apprendre les verbes de la lecon.', 'Garcia Lorca F.', '5A', '5AP.1', 'akaty', today, addDays(today, 9), '#A235F0', 0],
+        ['MATHEMATIQUES', 'Controle de proportionnalite', 'Controle: reviser les tableaux de proportionnalite, pourcentages et echelles.', 'Pythagore', '5A', '', 'akaty', today, addDays(today, 10), '#004B87', 0],
+        ['FRANCAIS', 'Controle conjugaison', 'Controle: revoir present, imparfait et passe compose. Preparer les verbes irreguliers.', 'Le Clezio J.', '5A', '', 'akaty', today, addDays(today, 12), '#C00000', 0],
+        ['ARTS PLASTIQUES', 'Materiel a apporter', 'Apporter feuilles A3, crayons de couleur et une image de reference.', 'Picasso P.', '5A', '', 'akaty', today, addDays(today, 13), '#F26A00', 0]
     ];
 
-    await run(`DELETE FROM homeworks WHERE classes = ?`, ['3A']);
+    await run(`DELETE FROM homeworks`);
 
     for (const homework of homeworks) {
         await run(
@@ -354,21 +362,17 @@ async function seedHomeworks(today) {
 }
 
 async function seedAgendaAndCourses(today) {
-    const monday = nextWeekday(today, 1);
-    const tuesday = addDays(monday, 1);
-    const wednesday = addDays(monday, 2);
-    const thursday = addDays(monday, 3);
-    const friday = addDays(monday, 4);
+    const firstMonday = mondayOfWeek(today);
 
     await run(`DELETE FROM agenda_events`);
     await run(`DELETE FROM courses`);
 
     const events = [
-        ['global', '*', 'Reunion parents-professeurs', 'Rendez-vous factice pour tester les agendas Kroco.', setTime(monday, 17, 30), setTime(monday, 19, 0), '#3498DB', 0],
-        ['class', '3A', 'Conseil de classe 3A', 'Bilan du trimestre et points de vigilance.', setTime(tuesday, 16, 45), setTime(tuesday, 18, 15), '#9B59B6', 0],
-        ['class', '3A', 'Sortie CDI', 'Recherche documentaire encadree.', setTime(wednesday, 10, 0), setTime(wednesday, 11, 30), '#2ECC71', 0],
-        ['teacher', 'pgothier', 'Equipe pedagogique 3A', 'Preparation du prochain cycle de devoirs.', setTime(thursday, 12, 30), setTime(thursday, 13, 15), '#E67E22', 0],
-        ['global', '*', 'Journee banalisee tests Kroco', 'Evenement sans horaire pour valider les imports.', friday, friday, '#95A5A6', 1]
+        ['global', '*', 'Reunion parents-professeurs', 'Rendez-vous factice pour tester les agendas Kroco.', setTime(addWeeks(firstMonday, 1), 17, 30), setTime(addWeeks(firstMonday, 1), 19, 0), '#3498DB', 0],
+        ['class', '5A', 'Conseil de classe 5A', 'Bilan du trimestre avec le professeur principal.', setTime(addDays(addWeeks(firstMonday, 1), 1), 16, 45), setTime(addDays(addWeeks(firstMonday, 1), 1), 18, 15), '#9B59B6', 0],
+        ['class', '5A', 'Sortie CDI', 'Recherche documentaire encadree pour le travail de francais.', setTime(addDays(addWeeks(firstMonday, 2), 2), 10, 0), setTime(addDays(addWeeks(firstMonday, 2), 2), 11, 30), '#2ECC71', 0],
+        ['teacher', 'lpasteur', 'Equipe pedagogique 5A', 'Preparation du prochain cycle de devoirs.', setTime(addDays(addWeeks(firstMonday, 2), 3), 12, 30), setTime(addDays(addWeeks(firstMonday, 2), 3), 13, 15), '#E67E22', 0],
+        ['global', '*', 'Journee banalisee tests Kroco', 'Evenement sans horaire pour valider les imports.', addDays(addWeeks(firstMonday, 3), 4), addDays(addWeeks(firstMonday, 3), 4), '#95A5A6', 1]
     ];
 
     for (const event of events) {
@@ -388,38 +392,77 @@ async function seedAgendaAndCourses(today) {
         );
     }
 
-    const courses = [
-        ['3A', 'pgothier', 'Maths', 'GOTHIER Paula', 'Salle 204', monday, 96, 12, '#F49737', 0],
-        ['3A', 'lgousse', 'Anglais', 'GOUSSE Leo', 'Salle 118', monday, 112, 12, '#5DADE2', 0],
-        ['3A', 'pgothier', 'Technologie', 'GOTHIER Paula', 'Labo Tech 1', tuesday, 90, 18, '#58D68D', 0],
-        ['3A', 'pgothier', 'Histoire-Geo', 'GOTHIER Paula', 'Salle 204', wednesday, 108, 12, '#AF7AC5', 1],
-        ['3A', 'pgothier', 'SVT', 'GOTHIER Paula', 'Labo SVT', thursday, 96, 12, '#EC7063', 0],
-        ['3A', 'lgousse', 'Anglais', 'GOUSSE Leo', 'Salle 118', friday, 102, 12, '#5DADE2', 0]
+    const weeklyCourses = [
+        [0, 0, 1, 'SVT', 'lpasteur', 'PASTEUR L.', 'Labo SVT', '#73F4EE'],
+        [0, 1, 1, 'HIST.GEO', 'atocqueville', 'TOCQUEVILLE A.', 'Salle 205', '#7A3A3A'],
+        [0, 2, 1, 'FRANCAIS', 'jleclezio', 'LE CLEZIO J.', 'Salle 101', '#C00000'],
+        [0, 3, 1, 'MATHEMATIQUES', 'npythagore', 'PYTHAGORE', 'Salle 208', '#004B87'],
+        [0, 5, 2, 'EPI Rome antique', 'mciceron', 'CICERON', 'Salle projet', '#BFBFBF'],
+
+        [1, 0, 1, 'TECHNO', 'sjobs', 'JOBS S.', 'Labo techno', '#3498F4'],
+        [1, 1, 1, 'HIST.GEO', 'atocqueville', 'TOCQUEVILLE A.', 'Salle 205', '#7A3A3A'],
+        [1, 2, 1, 'SC. PHYS', 'aeinstein', 'EINSTEIN A.', 'Labo physique', '#0C88B8'],
+        [1, 4, 1, 'ANGLAIS LV1', 'wshakespeare', 'SHAKESPEARE W.', 'Salle 201', '#FF00DC'],
+        [1, 5, 1, 'ACC. PERSO', 'npythagore', 'PYTHAGORE', 'Salle permanence', '#3D8583'],
+        [1, 6, 1, 'ACC. PERSO', 'jleclezio', 'LE CLEZIO J.', 'Salle permanence', '#3D8583'],
+
+        [2, 0, 1, 'FRANCAIS', 'jleclezio', 'LE CLEZIO J.', 'Salle 101', '#C00000'],
+        [2, 1, 1, 'MATHEMATIQUES', 'npythagore', 'PYTHAGORE', 'Salle 208', '#004B87'],
+        [2, 2, 2, 'EPS', 'pcoubertin', 'COUBERTIN P.', 'Gymnase', '#77F47B'],
+
+        [3, 0, 1, 'FRANCAIS', 'jleclezio', 'LE CLEZIO J.', 'Salle 101', '#C00000'],
+        [3, 1, 1, 'MATHEMATIQUES', 'npythagore', 'PYTHAGORE', 'Salle 208', '#004B87'],
+        [3, 2, 1, 'ANGLAIS LV1', 'wshakespeare', 'SHAKESPEARE W.', 'Salle 201', '#FF00DC'],
+        [3, 3, 1, 'HIST.GEO', 'atocqueville', 'TOCQUEVILLE A.', 'Salle 205', '#7A3A3A'],
+        [3, 5, 1, 'ESPAGNOL LV2', 'fgarcialorca', 'GARCIA LORCA F. [5AP.1]', 'Salle 301', '#A235F0'],
+        [3, 6, 1, 'ACC. PERSO', 'jleclezio', 'LE CLEZIO J.', 'Salle permanence', '#3D8583'],
+
+        [4, 0, 1, 'ESPAGNOL LV2', 'fgarcialorca', 'GARCIA LORCA F. [5AP.1]', 'Salle 301', '#A235F0'],
+        [4, 1, 2, 'ARTS PLASTIQUES', 'ppicasso', 'PICASSO P.', 'Atelier arts', '#F26A00'],
+        [4, 4, 1, 'ANGLAIS LV1', 'wshakespeare', 'SHAKESPEARE W.', 'Salle 201', '#FF00DC'],
+        [4, 5, 1, 'TECHNO', 'sjobs', 'JOBS S.', 'Labo techno', '#3498F4'],
+        [4, 6, 1, 'ACC. PERSO', 'npythagore', 'PYTHAGORE', 'Salle permanence', '#3D8583']
     ];
 
-    for (const course of courses) {
-        await run(
-            `INSERT INTO courses (className, teacherUsername, subject, teacherLabel, room, date, place, duration, color, cancelled)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                course[0],
-                course[1],
-                course[2],
-                course[3],
-                course[4],
-                formatDate(course[5]),
-                course[6],
-                course[7],
-                course[8],
-                course[9]
-            ]
-        );
+    const testLessons = new Set([
+        '1|3|MATHEMATIQUES',
+        '2|0|HIST.GEO',
+        '2|2|FRANCAIS',
+        '3|4|ANGLAIS LV1'
+    ]);
+
+    for (let week = 0; week < 52; week++) {
+        const monday = addWeeks(firstMonday, week);
+        for (const course of weeklyCourses) {
+            const [weekday, place, duration, subject, teacherUsername, teacherLabel, room, color] = course;
+            const courseDate = addDays(monday, weekday);
+            const isTest = testLessons.has(`${week}|${weekday}|${subject}`) ? 1 : 0;
+            await run(
+                `INSERT INTO courses (className, teacherUsername, subject, teacherLabel, room, date, place, duration, color, cancelled, isTest)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    '5A',
+                    teacherUsername,
+                    subject,
+                    teacherLabel,
+                    room,
+                    formatDate(courseDate),
+                    place,
+                    duration,
+                    color,
+                    0,
+                    isTest
+                ]
+            );
+        }
     }
 }
 
 async function main() {
     const today = new Date();
     await ensureSchema();
+    await run(`DELETE FROM sessions`).catch(() => {});
+    await run(`DELETE FROM evaluations`).catch(() => {});
     await seedReferenceData(today);
     await seedHomeworks(today);
     await seedAgendaAndCourses(today);

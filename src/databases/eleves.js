@@ -41,17 +41,19 @@ db.serialize(() => {
         }
     });
 
-    const exampleUser = `INSERT INTO students (nom, prenom, usertype, classe, groupes, username, password, notes, adresse1, adresse2, adresse3, adresse4, codePostal, eMail, indicatifTel, numeroINE, pays, province, telephonePortable, ville, discordId)
-  SELECT 'KATY', 'Alex', 3, '3A', 'groupe1,groupe2', 'akaty', 'Password123!', '[{"id": 0, "subject": "Maths", "grade": "17", "outof": "20", "date": "27/06/2023", "commentary": "Trigo n°2", "coef": "1"}, {"id": 1, "subject": "Anglais", "grade": "20", "outof": "20", "date": "21/06/2023", "commentary": "Verbes irréguliers", "coef": "1"}]',
-  '', '', '', '', '', 'akaty@fossnote.com', '33', '123456789AB', 'France', 'Rhône-Alpes', '0712345678', 'Lyon', '0'
-  WHERE NOT EXISTS (SELECT 1 FROM students WHERE username = 'akaty')`;
-    db.run(exampleUser, (err) => {
-        if (err) {
-            console.error(err.message);
-        } else {
-            console.log('Example student initialized.');
-        }
-    });
+    if (process.env.FOSSNOTE_DISABLE_DEMO_DATA !== "1") {
+        const exampleUser = `INSERT INTO students (nom, prenom, usertype, classe, groupes, username, password, notes, adresse1, adresse2, adresse3, adresse4, codePostal, eMail, indicatifTel, numeroINE, pays, province, telephonePortable, ville, discordId)
+      SELECT 'KATY', 'Alex', 3, '3A', 'groupe1,groupe2', 'akaty', 'Password123!', '[{"id": 0, "subject": "Maths", "grade": "17", "outof": "20", "date": "27/06/2023", "commentary": "Trigo n°2", "coef": "1"}, {"id": 1, "subject": "Anglais", "grade": "20", "outof": "20", "date": "21/06/2023", "commentary": "Verbes irréguliers", "coef": "1"}]',
+      '', '', '', '', '', 'akaty@fossnote.com', '33', '123456789AB', 'France', 'Rhône-Alpes', '0712345678', 'Lyon', '0'
+      WHERE NOT EXISTS (SELECT 1 FROM students WHERE username = 'akaty')`;
+        db.run(exampleUser, (err) => {
+            if (err) {
+                console.error(err.message);
+            } else {
+                console.log('Example student initialized.');
+            }
+        });
+    }
 });
 
 // Fonction pour créer un nouvel utilisateur avec des notes au format JSON

@@ -27,7 +27,9 @@ db.serialize(() => {
         if (err) {
             console.error(err.message);
         } else {
-            createDemoHomework("Maths", "Devoir maison", "Exercices 2 et 3 page 255", "Mme Gothier P.", "3A", "", "", "30/06/2023", "30/06/2023", "#F49737", 0)
+            if (process.env.FOSSNOTE_DISABLE_DEMO_DATA !== "1") {
+                createDemoHomework("Maths", "Devoir maison", "Exercices 2 et 3 page 255", "Mme Gothier P.", "3A", "", "", "30/06/2023", "30/06/2023", "#F49737", 0);
+            }
             console.log('Table "homeworks" initialized.');
         }
     });

@@ -26,8 +26,10 @@ db.serialize(async () => {
         if (err) {
             console.error(err.message);
         } else {
-            createDemoEvaluation("pgothier", "3A", "", "Maths", "27/06/2023", "27/06/2023", "Trigo n°2", "20", "1")
-            createDemoEvaluation("lgousse", "3A", "", "Anglais", "21/06/2023", "21/06/2023", "Verbes irréguliers", "20", "1")
+            if (process.env.FOSSNOTE_DISABLE_DEMO_DATA !== "1") {
+                createDemoEvaluation("pgothier", "3A", "", "Maths", "27/06/2023", "27/06/2023", "Trigo n°2", "20", "1");
+                createDemoEvaluation("lgousse", "3A", "", "Anglais", "21/06/2023", "21/06/2023", "Verbes irréguliers", "20", "1");
+            }
             console.log('Table "evaluations" initialized.');
         }
     });
