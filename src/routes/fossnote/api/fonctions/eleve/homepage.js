@@ -5,6 +5,11 @@ const {
     getHomeworksByClassNC // NC for No Callback
 } = require('../../../../../databases/homeworks');
 
+const {
+    getAgendaEventsForClass,
+    getCoursesForClass
+} = require('../../../../../databases/agenda');
+
 const forge = require('node-forge');
 
 const {
@@ -81,6 +86,8 @@ async function bind(req, res, currentSession) {
     }));
 
     const homeworks = await getHomeworksByClassNC(user.classe);
+    const agendaEvents = await getAgendaEventsForClass(user.classe);
+    const courses = await getCoursesForClass(user.classe);
 
     let serviceOrder = 12;
     let services = {};
@@ -367,7 +374,7 @@ async function bind(req, res, currentSession) {
                     }
                 },
                 "agenda": {
-                    "listeEvenements": []
+                    "listeEvenements": agendaEvents
                 },
                 "prochaineDate": {
                     "_T": 7,
@@ -382,7 +389,7 @@ async function bind(req, res, currentSession) {
                 "prefsGrille": {
                     "genreRessource": 4
                 },
-                "ListeCours": [],
+                "ListeCours": courses,
                 "debutDemiPensionHebdo": 126,
                 "finDemiPensionHebdo": 132,
                 "absences": {

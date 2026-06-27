@@ -1,0 +1,15 @@
+services:
+  pronote-sandbox:
+    build: .
+    container_name: kroco-pronote-sandbox
+    environment:
+      FOSSNOTE_DATABASE_PATH: /data/database.db
+      FOSSNOTE_SEED_ON_START: "1"
+    ports:
+      - "${FOSSNOTE_PORT:-3001}:3000"
+    volumes:
+      - pronote-sandbox-data:/data
+    restart: unless-stopped
+
+volumes:
+  pronote-sandbox-data:

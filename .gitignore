@@ -3,3 +3,5 @@
 eleves.db
 database.db
 /src/config/discord.json
+.DS_Store
+data/

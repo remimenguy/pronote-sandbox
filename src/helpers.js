@@ -42,7 +42,9 @@ function getDateNow() {
 
 function get_metadata() {
     const rawdata = fs.readFileSync(`${__dirname}/config/metadata.json`);
-    return JSON.parse(rawdata);
+    const metadata = JSON.parse(rawdata);
+    metadata.Periodes = getCurrentSchoolYearPeriods(metadata.Periodes);
+    return metadata;
 }
 
 function getFirstSchoolYear() {
@@ -113,18 +115,45 @@ function getCurrentSchoolYear() {
 
 function getCurrentPeriod(json) {
     const today = moment().startOf('day');
+    let lastPeriod = null;
     
     for (const periodKey in json) {
       const period = json[periodKey];
       const from = moment(period.from, 'DD/MM/YYYY').startOf('day');
       const to = moment(period.to, 'DD/MM/YYYY').endOf('day');
-      if (today.isBetween(from, to)) {
+      lastPeriod = period;
+      if (today.isBetween(from, to, undefined, '[]')) {
         return period;
       }
     }
     
-    return null;
+    return lastPeriod;
   }
+
+function getCurrentSchoolYearPeriods(periods) {
+    const today = new Date();
+    const year = today.getFullYear();
+    const startYear = today.getMonth() >= 8 ? year : year - 1;
+    const endYear = startYear + 1;
+
+    return {
+        p1: {
+            ...periods.p1,
+            from: `02/09/${startYear}`,
+            to: `29/11/${startYear}`
+        },
+        p2: {
+            ...periods.p2,
+            from: `02/12/${startYear}`,
+            to: `14/03/${endYear}`
+        },
+        p3: {
+            ...periods.p3,
+            from: `17/03/${endYear}`,
+            to: `05/07/${endYear}`
+        }
+    };
+}
 
 module.exports = {
     is_compatible,

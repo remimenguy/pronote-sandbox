@@ -4,7 +4,10 @@
   "description": "A free open source selfhostable PRONOTE.",
   "main": "./src/app.js",
   "scripts": {
-    "start": "node ./src/app.js"
+    "start": "node ./src/app.js",
+    "seed": "node ./scripts/seed-sandbox.js",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
   },
   "author": "Fufly",
   "license": "ISC",

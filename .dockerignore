@@ -1,0 +1,9 @@
+.DS_Store
+.git
+node_modules
+npm-debug.log
+database.db
+session.db
+eleves.db
+data
+src/config/discord.json

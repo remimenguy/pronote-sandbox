@@ -6,6 +6,11 @@ const {
     getHomeworksByClassNC // NC for No Callback
 } = require('../../../../../databases/homeworks');
 
+const {
+    getAgendaEventsForTeacher,
+    getCoursesForTeacher
+} = require('../../../../../databases/agenda');
+
 const forge = require('node-forge');
 
 const {
@@ -36,6 +41,8 @@ async function bind(req, res, currentSession) {
     var periodes = get_metadata().Periodes;
 
     var currentPeriod = getCurrentPeriod(periodes);
+    const agendaEvents = await getAgendaEventsForTeacher(challengeInfos.username.toLowerCase());
+    const courses = await getCoursesForTeacher(challengeInfos.username.toLowerCase());
     
 
     var response = { // To Sync With DB
@@ -122,12 +129,12 @@ async function bind(req, res, currentSession) {
                 "prefsGrille": {
                   "genreRessource": 3
                 },
-                "ListeCours": [], // TODO : SYNC WITH DB | IMPORTANT
+                "ListeCours": courses,
                 "debutDemiPensionHebdo": 108,
                 "finDemiPensionHebdo": 111,
                 "actualites": {}, // TODO : SYNC WITH DB
                 "agenda": {
-                  "listeEvenements": [] // TODO : SYNC WITH DB
+                  "listeEvenements": agendaEvents
                 },
                 "discussions": {
                   "listeEtiquettes": {
