@@ -32,8 +32,11 @@ db.serialize(() => {
         place INTEGER NOT NULL,
         duration INTEGER NOT NULL,
         color TEXT NOT NULL,
-        cancelled INTEGER NOT NULL DEFAULT 0
+        cancelled INTEGER NOT NULL DEFAULT 0,
+        isTest INTEGER NOT NULL DEFAULT 0
     )`);
+
+    db.run(`ALTER TABLE courses ADD COLUMN isTest INTEGER NOT NULL DEFAULT 0`, () => {});
 });
 
 function all(query, params) {
@@ -71,25 +74,21 @@ function pronoteElement(label, number, genre) {
 }
 
 const START_TIMES = [
-    "08:10:00", "08:40:00", "09:05:00", "09:35:00", "10:15:00",
-    "10:45:00", "11:10:00", "11:40:00", "12:05:00", "12:35:00",
-    "13:00:00", "13:30:00", "13:55:00", "14:25:00", "15:05:00",
-    "15:35:00", "16:00:00", "16:30:00", "16:55:00", "17:25:00"
+    "08:30:00", "09:25:00", "10:35:00", "11:35:00",
+    "13:05:00", "14:00:00", "15:10:00", "16:05:00"
 ];
 
 const END_TIMES = [
-    "08:40:00", "09:05:00", "09:35:00", "10:00:00", "10:45:00",
-    "11:10:00", "11:40:00", "12:05:00", "12:35:00", "13:00:00",
-    "13:30:00", "13:55:00", "14:25:00", "14:50:00", "15:35:00",
-    "16:00:00", "16:30:00", "16:55:00", "17:25:00", "17:50:00"
+    "09:25:00", "10:20:00", "11:35:00", "13:05:00",
+    "14:00:00", "14:55:00", "16:05:00", "17:00:00"
 ];
 
 function courseStartIndex(row) {
-    return row.place % START_TIMES.length;
+    return Math.max(0, Math.min(row.place, START_TIMES.length - 1));
 }
 
 function courseDuration(row) {
-    return Math.max(1, Math.round(row.duration / 6));
+    return Math.max(1, row.duration);
 }
 
 function courseDateTime(row, time) {
@@ -139,7 +138,8 @@ function courseToPronote(row) {
             "_T": 24,
             "V": {
                 "L": row.subject,
-                "N": "1800" + row.id
+                "N": "1800" + row.id,
+                "estDevoir": row.isTest === 1
             }
         },
         "ListeContenus": pronoteList([
